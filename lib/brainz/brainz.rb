@@ -5,8 +5,8 @@ module Brainz
     attr_accessor :learning_rate, :momentum, :max_iterations, :wanted_error
     attr_writer :num_hidden
     attr_accessor :teaching, :input_order, :output_order
-    attr_accessor :input_act, :hidden_act, :output_act, :error
-    attr_accessor :input_layer, :num_input, :output_layer, :num_output
+    attr_accessor :input_act, :hidden_act, :output_act
+    attr_accessor :num_input, :num_output
     attr_accessor :input_weights, :output_weights, :input_change, :output_change
 
     def self.current
@@ -88,26 +88,40 @@ module Brainz
       true
     end
 
-    def explain(*args)
+    def evaluate(*args)
       input = if args.first.is_a?(Hash)
                 hash = args.first
                 input_order ? input_order.collect { |key| hash[key] } : hash.values
               elsif args.any?
                 args
               end
-      update(input, [])
+      update(input)
+    end
+
+    def explain(*args)
+      evaluate(*args)
+      output_order ? output_act.to_hash(output_order) : output_act
+    end
+
+    def guess(*args)
+      evaluate(*args)
       if num_output == 1
-        output_order ? output_act.map!(&:round).to_hash(output_order) : output_act.first.round
+        output_act.first.round
       else
-        output_order ? output_act.to_hash(output_order) : output_act
+        max = output_act.max
+        unless output_order
+          a = 'a'
+          self.output_order = [:a] + (num_output - 1).times.collect { a.succ!.to_sym }
+        end
+
+        output_order[output_act.index(max)]
       end
     end
 
-    def update(input, targets = [])
+    def update(input)
       @num_input ||= input.length + 1
-      @num_output ||= targets.length
-      @input_weights ||= Array.new(num_input) { Array.new(num_hidden) { Kernel.rand * 0.4 - 0.2 } }
-      @output_weights ||= Array.new(num_hidden) { Array.new(num_output) { Kernel.rand * 4 - 2 } }
+      @input_weights ||= Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(-0.2..0.2) } }
+      @output_weights ||= Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(-2..2) } }
       @input_change ||= Array.new(num_input) { Array.new(num_hidden) { 0 } }
       @output_change ||= Array.new(num_hidden) { Array.new(num_output) { 0 } }
 
@@ -120,9 +134,7 @@ module Brainz
 
       num_hidden.times do |h|
         sum = 0.0
-        num_input.times do |i|
-          sum += input_weights[i][h] * input_act[i]
-        end
+        num_input.times { |i| sum += input_weights[i][h] * input_act[i] }
         hidden_act[h] = sigmoid(sum)
       end
 

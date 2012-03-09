@@ -12,7 +12,7 @@ brainz.teach do |iteration, error|
   p "error_rate = #{'%.3f' % error || 0 } after #{iteration} iterations" if iteration % 25 == 0
 end
 
-puts "0 and 0 = #{brainz.explain(a: 0, b: 0)}, #{brainz.explain(a: 0, b: 0) == 0}"
-puts "0 and 1 = #{brainz.explain(a: 0, b: 1)}, #{brainz.explain(a: 0, b: 1) == 0}"
-puts "1 and 1 = #{brainz.explain(a: 1, b: 1)}, #{brainz.explain(a: 1, b: 1) == 1}"
-puts "1 and 0 = #{brainz.explain(a: 1, b: 0)}, #{brainz.explain(a: 1, b: 0) == 0}"
+puts "0 and 0 = #{brainz.guess(a: 0, b: 0)}, #{brainz.guess(a: 0, b: 0) == 0}"
+puts "0 and 1 = #{brainz.guess(a: 0, b: 1)}, #{brainz.guess(a: 0, b: 1) == 0}"
+puts "1 and 1 = #{brainz.guess(a: 1, b: 1)}, #{brainz.guess(a: 1, b: 1) == 1}"
+puts "1 and 0 = #{brainz.guess(a: 1, b: 0)}, #{brainz.guess(a: 1, b: 0) == 0}"
