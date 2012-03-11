@@ -8,44 +8,27 @@ describe Brainz::Brainz do
       subject.that.should == subject
     end
 
-    it "should reset teaching if no args" do
-      subject.teaching = {speed: 5}
-      subject.that.teaching.should be_nil
+    it "should reset input if no args" do
+      subject.input = {speed: 5}
+      subject.that.input.should be_nil
     end
 
-    it "should change teaching hash" do
+    it "should change input order" do
       expect {
         subject.that(speed: 15)
-      }.to change { subject.teaching }.to({speed: 15})
+      }.to change { subject.input_order }.from(nil).to([:speed])
     end
 
-    it "should add value to teaching hash" do
+    it "should add value to input hash" do
       expect {
         subject.that speed: 100, time: 0.25
-      }.to change { subject.teaching }.from(nil).to({speed: 100, time: 0.25})
+      }.to change { subject.input }.from(nil).to([100, 0.25])
     end
 
-    it "should add unnamed value to teaching" do
+    it "should add unnamed value to input" do
       expect {
         subject.that 100, 0.25
-      }.to change { subject.teaching }.from(nil).to([100, 0.25])
-    end
-  end
-
-  describe "#is" do
-    before do
-      subject.stubs(:update)
-      subject.stubs(:back_propagate)
-    end
-
-    it "should return true" do
-      subject.teaching = {a: 1, b: 1}
-      subject.is(sum: 2).should be_true
-    end
-
-    it "should return false if there was no example" do
-      subject.teaching = nil
-      subject.is(sum: 2).should be_false
+      }.to change { subject.input }.from(nil).to([100, 0.25])
     end
   end
 

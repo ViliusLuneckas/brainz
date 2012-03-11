@@ -4,16 +4,18 @@ module Brainz
     # options
     attr_accessor :learning_rate, :momentum, :max_iterations, :wanted_error
     attr_writer :num_hidden
-    attr_accessor :teaching, :input_order, :output_order
+    attr_accessor :input, :input_order, :output_order
     attr_accessor :input_act, :hidden_act, :output_act
     attr_accessor :num_input, :num_output
     attr_accessor :input_weights, :output_weights, :input_change, :output_change
+    attr_reader :algorithm
 
     def self.current
       @@current
     end
 
-    def initialize
+    def initialize(algorithm = :backpropagation)
+      self.extend ::Brainz::Algorithms.const_get(algorithm.to_s.capitalize)
     end
 
     def learning_options(options)
@@ -21,7 +23,7 @@ module Brainz
     end
 
     def num_hidden
-      @nu_hidden || (num_input + num_output) * 2 / 3
+      @num_hidden || (num_input + num_output) * 2 / 3
     end
 
     def learning_cycle
@@ -47,54 +49,61 @@ module Brainz
       end
     end
 
+    def format_input(*args)
+      if args.first.is_a?(Hash)
+        hash = args.first
+        if input_order
+          input_order.collect { |key| hash[key] }
+        else
+          self.input_order = hash.keys
+          hash.values
+        end
+      elsif args.any?
+        args
+      end
+    end
+
     def that(*args)
-      self.teaching = if args.first.is_a?(Hash)
-                        hash = args.first
-                        self.input_order = hash.keys unless input_order
-                        hash
-                      elsif args.any?
-                        args
-                      end
+      self.input = format_input(*args)
       self
     end
 
-    def is(*args)
-      return false if teaching.nil?
+    def format_output(*args)
+      if args.first.is_a?(Hash)
+        hash = args.first
+        if output_order
+          output_order.collect { |key| hash[key] }
+        else
+          self.output_order = hash.keys
+          hash.values
+        end
+      else
+        args
+      end
+    end
 
-      output = if args.first.is_a?(Hash)
-                 hash = args.first
-                 if output_order
-                   output_order.collect { |key| hash[key] }
-                 else
-                   self.output_order = hash.keys
-                   hash.values
-                 end
-               else
-                 args
-               end
+    def is(*args)
+      return false if input.nil?
+
+      output = format_output(*args)
+
       @num_output ||= output.length
 
-      input = unless teaching.nil?
-                if teaching.is_a?(Hash)
-                  input_order ? input_order.collect { |key| teaching[key] } : teaching.values
-                else
-                  teaching
-                end
-              end
-
+      @num_input ||= input.size + 1
 
       update(input)
-      back_propagate(output)
+      fix_weights(output)
       true
     end
 
     def evaluate(*args)
-      input = if args.first.is_a?(Hash)
-                hash = args.first
-                input_order ? input_order.collect { |key| hash[key] } : hash.values
-              elsif args.any?
-                args
-              end
+      input = format_input(*args)
+      #if args.first.is_a?(Hash)
+      #  hash = args.first
+      #  input_order ? input_order.collect { |key| hash[key] } : hash.values
+      #elsif args.any?
+      #  args
+      #end
       update(input)
     end
 
@@ -118,79 +127,14 @@ module Brainz
       end
     end
 
-    def update(input)
-      @num_input ||= input.length + 1
-      @input_weights ||= Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(0.4) - 0.2 } }
-      @output_weights ||= Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(4) - 2 } }
-      @input_change ||= Array.new(num_input) { Array.new(num_hidden) { 0 } }
-      @output_change ||= Array.new(num_hidden) { Array.new(num_output) { 0 } }
+    def prepare
+      @input_weights = Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(0.4) - 0.2 } }
+      @output_weights = Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(4) - 2 } }
+      @input_change = Array.new(num_input) { Array.new(num_hidden) { 0 } }
+      @output_change = Array.new(num_hidden) { Array.new(num_output) { 0 } }
 
-      @output_act ||= []
-      @hidden_act ||= []
-
-
-      @input_act = input
-      @input_act += [0]
-
-      num_hidden.times do |h|
-        sum = 0.0
-        num_input.times { |i| sum += input_weights[i][h] * input_act[i] }
-        hidden_act[h] = sigmoid(sum)
-      end
-
-      num_output.times do |o|
-        sum = 0.0
-        num_hidden.times { |h| sum += hidden_act[h] * output_weights[h][o] }
-        output_act[o] = sigmoid(sum)
-      end
-
-      self
-    end
-
-    def back_propagate(targets)
-      output_deltas = [0.0] * num_output
-
-      # calculate error for output neurons
-      num_output.times do |k|
-        error = targets[k] - output_act[k]
-        output_deltas[k] = d_sigmoid(output_act[k]) * error
-      end
-
-
-      # calculate error for hidden neurons
-      hidden_deltas = [0.0] * num_hidden
-      num_hidden.times do |j|
-        error = 0.0
-        num_output.times do |k|
-          error = error + output_deltas[k] * output_weights[j][k]
-          hidden_deltas[j] = d_sigmoid(hidden_act[j]) * error
-        end
-      end
-
-      # update output weights
-      num_hidden.times do |j|
-        num_output.times do |k|
-          change = output_deltas[k] * hidden_act[j]
-          output_weights[j][k] += learning_rate * change + momentum * output_change[j][k]
-          output_change[j][k] = change
-        end
-      end
-
-      # update input weights
-      num_input.times do |i|
-        num_hidden.times do |j|
-          change = hidden_deltas[j] * input_act[i]
-          input_weights[i][j] += learning_rate * change + momentum * input_change[i][j]
-          input_change[i][j] = change
-        end
-      end
-
-      error = 0.0
-      targets.length.times do |k|
-        error += 0.5 * (targets[k] - output_act[k]) ** 2
-      end
-
-      @cycle_error += error
+      @output_act = []
+      @hidden_act = []
     end
 
     include MathUtils
