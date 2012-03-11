@@ -120,8 +120,8 @@ module Brainz
 
     def update(input)
       @num_input ||= input.length + 1
-      @input_weights ||= Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(-0.2..0.2) } }
-      @output_weights ||= Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(-2..2) } }
+      @input_weights ||= Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(0.4) - 0.2 } }
+      @output_weights ||= Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(4) - 2 } }
       @input_change ||= Array.new(num_input) { Array.new(num_hidden) { 0 } }
       @output_change ||= Array.new(num_hidden) { Array.new(num_output) { 0 } }
 
