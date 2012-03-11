@@ -141,8 +141,8 @@ describe Brainz::Brainz do
       expect {
         expect {
           subject.update([1.0, 1.0])
-        }.to change { subject.input_weights }.from(nil).to([[0, 0], [0, 0], [0, 0]])
-      }.to change { subject.output_weights }.from(nil).to([[0], [0]])
+        }.to change { subject.input_weights }.from(nil).to([[-0.2, -0.2], [-0.2, -0.2], [-0.2, -0.2]])
+      }.to change { subject.output_weights }.from(nil).to([[-2], [-2]])
     end
 
     it "should create input weights matrix size of input and hidden" do
