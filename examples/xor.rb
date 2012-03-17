@@ -4,15 +4,11 @@ require_relative '../lib/brainz'
 
 brainz = Brainz::Brainz.new
 
-brainz.teach do |iteration, error|
+brainz.teach(learning_rate: 0.2, momentum: 0.01, wanted_error: 0.01, max_iterations: 2000) do |iteration, error|
   that(a: 1, b: 1).is(0)
   that(1, 0).is(1)
   that(0, 1).is(1)
   that(0, 0).is(0)
-  p "error_rate = #{'%.3f' % error || 0 } after #{iteration} iterations" if iteration % 25 == 0
 end
 
-puts "0 xor 0 = #{brainz.guess(a: 0, b: 0)}, #{brainz.guess(a: 0, b: 0) == 0}"
-puts "0 xor 1 = #{brainz.guess(a: 0, b: 1)}, #{brainz.guess(a: 0, b: 1) == 1}"
-puts "1 xor 1 = #{brainz.guess(a: 1, b: 1)}, #{brainz.guess(a: 1, b: 1) == 0}"
-puts "1 xor 0 = #{brainz.guess(a: 1, b: 0)}, #{brainz.guess(a: 1, b: 0) == 1}"
+p "Learning took #{brainz.last_iterations}, error: #{brainz.error}, time: #{brainz.learning_time} s."

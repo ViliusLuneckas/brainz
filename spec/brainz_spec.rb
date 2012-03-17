@@ -33,36 +33,6 @@ describe Brainz::Brainz do
   end
 
   describe "#teach" do
-    it "should fill input layer" do
-      subject.teach do
-        subject.that(a: 6, b: 7).is(13)
-      end
-      subject.input_act.length.should == 3 # + 1 input bias
-    end
-
-    it "should fill in correct order" do
-      subject.teach do
-        subject.that(a: 6, b: 7).is(13)
-      end
-      subject.input_act.should == [6, 7, 0] # 0 - input bias
-    end
-
-    it "should not change order" do
-      subject.teach do
-        subject.that(a: 6, b: 7).is(13)
-        subject.that(b: 8, a: 9).is(17)
-      end
-      subject.input_act.should == [9, 8, 0] # 0 - input bias
-    end
-
-    it "should write to input directly" do
-      subject.teach do
-        subject.that(speed: 100, time: 0.5).is(50)
-        subject.that(50, 1).is(50)
-      end
-      subject.input_act.should == [50, 1, 0] # 0 - input bias
-    end
-
     it "should return iteration and error" do
       Kernel.stubs(random: 0)
       last_iteration = last_error = 0
@@ -111,7 +81,9 @@ describe Brainz::Brainz do
 
 
   describe "#update" do
+
     before do
+      pending
       subject.stubs(num_hidden: 2, num_output: 1)
     end
 

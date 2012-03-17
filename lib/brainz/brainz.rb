@@ -1,14 +1,13 @@
 module Brainz
   class Brainz
-    attr_accessor :cycle_error
-    # options
-    attr_accessor :learning_rate, :momentum, :max_iterations, :wanted_error
+    attr_reader :network
+    attr_accessor :max_iterations, :wanted_error, :momentum, :learning_rate
+    attr_accessor :input_order, :output_order, :input
+
     attr_writer :num_hidden
-    attr_accessor :input, :input_order, :output_order
-    attr_accessor :input_act, :hidden_act, :output_act
-    attr_accessor :num_input, :num_output
-    attr_accessor :input_weights, :output_weights, :input_change, :output_change
-    attr_reader :algorithm
+    attr_reader :num_output, :num_input
+
+    attr_reader :last_iterations
 
     def self.current
       @@current
@@ -19,7 +18,7 @@ module Brainz
     end
 
     def learning_options(options)
-      options.each { |option, value| send("#{option}=", value) }
+      options.each { |option, value| send("#{option}=", value) if respond_to? ("#{option}=")}
     end
 
     def num_hidden
@@ -27,26 +26,35 @@ module Brainz
     end
 
     def learning_cycle
-      @cycle_error = 1.0
-
+      old_error = 100.0
+      @last_iterations = 0
       max_iterations.times do |i|
-        old_error = cycle_error
-        @cycle_error = 0
+        @last_iterations += 1
+        if @network
+          old_error = @network.mse
+          @network.mse = 0
+        end
 
         yield(i, old_error)
 
-        break if cycle_error <= wanted_error
+        break if @network.mse <= wanted_error
       end
+    end
+
+    def learning_time
+      @learning_ended - @learning_started
     end
 
     def teach(options = {})
       @@current = self
+      @learning_started = Time.new
 
-      learning_options({learning_rate: 0.5, momentum: 0.15, wanted_error: 0.02, max_iterations: 1000}.merge(options))
+      learning_options({momentum: 0.15, learning_rate: 0.5, wanted_error: 0.02, max_iterations: 1000}.merge(options))
 
       learning_cycle do |iteration, error|
         yield(iteration, error)
       end
+      @learning_ended = Time.new
     end
 
     def format_input(*args)
@@ -83,33 +91,34 @@ module Brainz
     end
 
     def is(*args)
-      return false if input.nil?
+      unless input.nil?
+        output = format_output(*args)
 
-      output = format_output(*args)
+        @num_output ||= output.length
 
-      @num_output ||= output.length
+        @num_input ||= input.size
 
-      @num_input ||= input.size + 1
-
-      update(input)
-      fix_weights(output)
-      true
+        update(input)
+        fix_weights(output)
+      end
     end
 
     def evaluate(*args)
       input = format_input(*args)
-      #if args.first.is_a?(Hash)
-      #  hash = args.first
-      #  input_order ? input_order.collect { |key| hash[key] } : hash.values
-      #elsif args.any?
-      #  args
-      #end
       update(input)
     end
 
     def explain(*args)
       evaluate(*args)
       output_order ? output_act.to_hash(output_order) : output_act
+    end
+
+    def output_act
+      @network.output.neurons.collect(&:activation)
+    end
+
+    def error
+      @network.mse
     end
 
     def guess(*args)
@@ -122,22 +131,9 @@ module Brainz
           a = 'a'
           self.output_order = [:a] + (num_output - 1).times.collect { a.succ!.to_sym }
         end
-
         output_order[output_act.index(max)]
       end
     end
-
-    def prepare
-      @input_weights = Array.new(num_input) { Array.new(num_hidden) { Kernel.rand(0.4) - 0.2 } }
-      @output_weights = Array.new(num_hidden) { Array.new(num_output) { Kernel.rand(4) - 2 } }
-      @input_change = Array.new(num_input) { Array.new(num_hidden) { 0 } }
-      @output_change = Array.new(num_hidden) { Array.new(num_output) { 0 } }
-
-      @output_act = []
-      @hidden_act = []
-    end
-
-    include MathUtils
   end
 end
 

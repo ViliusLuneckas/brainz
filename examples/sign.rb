@@ -12,7 +12,11 @@ brainz.teach do |iteration, error|
   that(-20).is(-1)
   that(-4).is(-1)
   that(0).is(0)
-  p "error_rate = #{'%.3f' % error || 0 } after #{iteration} iterations" if iteration % 25 == 0
+  p "error_rate = #{'%.3f' % error || 0 } after #{iteration} iterations"
+end
+
+(-100..100).each do |test_value|
+  puts "Error with (#{test_value}) " if brainz.guess(test_value) != (test_value > 0 ? 1 : test_value < 0 ? -1 : 0)
 end
 
 puts "sign(0) = #{brainz.guess(0)}, #{brainz.guess(0) == 0}"
