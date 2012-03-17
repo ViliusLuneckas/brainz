@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.date = "2012-03-17"
   s.description = "Simple artificial intelligence"
   s.email = "vilius.luneckas@gmail.com"
-  s.extra_rdoc_files = ["README.rdoc", "lib/brainz.rb", "lib/brainz/backpropagation.rb", "lib/brainz/brainz.rb", "lib/brainz/layer.rb", "lib/brainz/loader.rb", "lib/brainz/network.rb", "lib/brainz/neuron.rb", "lib/brainz/synapse.rb", "lib/brainz/version.rb", "lib/ext/array.rb"]
-  s.files = ["README.rdoc", "Rakefile", "brainz.gemspec", "examples/and.rb", "examples/sign.rb", "examples/xor.rb", "lib/brainz.rb", "lib/brainz/backpropagation.rb", "lib/brainz/brainz.rb", "lib/brainz/layer.rb", "lib/brainz/loader.rb", "lib/brainz/network.rb", "lib/brainz/neuron.rb", "lib/brainz/synapse.rb", "lib/brainz/version.rb", "lib/ext/array.rb", "spec/array_spec.rb", "spec/brainz_spec.rb", "spec/loader_spec.rb", "spec/spec_helper.rb", "spec/temp/brainz.b", "Manifest"]
+  s.extra_rdoc_files = ["LICENSE", "README.rdoc", "lib/brainz.rb", "lib/brainz/backpropagation.rb", "lib/brainz/brainz.rb", "lib/brainz/layer.rb", "lib/brainz/loader.rb", "lib/brainz/network.rb", "lib/brainz/neuron.rb", "lib/brainz/synapse.rb", "lib/brainz/version.rb", "lib/ext/array.rb"]
+  s.files = ["LICENSE", "README.rdoc", "Rakefile", "brainz.gemspec", "examples/and.rb", "examples/sign.rb", "examples/xor.rb", "lib/brainz.rb", "lib/brainz/backpropagation.rb", "lib/brainz/brainz.rb", "lib/brainz/layer.rb", "lib/brainz/loader.rb", "lib/brainz/network.rb", "lib/brainz/neuron.rb", "lib/brainz/synapse.rb", "lib/brainz/version.rb", "lib/ext/array.rb", "spec/array_spec.rb", "spec/brainz_spec.rb", "spec/loader_spec.rb", "spec/spec_helper.rb", "spec/temp/brainz.b", "Manifest"]
   s.homepage = "https://github.com/ViliusLuneckas/brainz/"
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Brainz", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
