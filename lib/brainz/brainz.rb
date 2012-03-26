@@ -22,7 +22,7 @@ module Brainz
     end
 
     def num_hidden
-      @num_hidden || (num_input + num_output) * 2 / 3
+      @num_hidden || [(num_input + num_output) * 2 / 3]
     end
 
     def learning_cycle

@@ -47,9 +47,9 @@ describe Brainz::Brainz do
   end
 
   describe "#num_hidden" do
-    it "should return 7" do
+    it "should return [7]" do
       subject.stubs(num_input: 5, num_output: 6)
-      subject.num_hidden.should == 7
+      subject.num_hidden.should == [7]
     end
   end
 
