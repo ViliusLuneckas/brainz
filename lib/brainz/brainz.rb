@@ -139,9 +139,5 @@ end
 
 
 def self.method_missing(meth = nil, *args, &block)
-  if meth == :that
-    Brainz::Brainz.current.send(meth, *args)
-  else
-    raise NoMethodError
-  end
+  meth == :that ? Brainz::Brainz.current.send(meth, *args) : super
 end
