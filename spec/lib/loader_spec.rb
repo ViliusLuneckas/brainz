@@ -7,12 +7,18 @@ describe "loader" do
   subject { Brainz::Brainz.new }
 
   before do
+    FileUtils.rm_rf(file_path)
+
     subject.teach do
       subject.that(a: 1, b: 1).is(0)
       subject.that(1, 0).is(1)
       subject.that(0, 1).is(1)
       subject.that(0, 0).is(0)
     end
+  end
+
+  after do
+    FileUtils.rm_rf(file_path)
   end
 
   it "should work after load" do
