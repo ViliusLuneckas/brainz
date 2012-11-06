@@ -1,5 +1,4 @@
-require_relative '../lib/brainz'
-
+require 'brainz'
 
 brainz = Brainz::Brainz.new
 

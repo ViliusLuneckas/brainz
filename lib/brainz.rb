@@ -1,13 +1,13 @@
 require "brainz/version"
-require_relative 'ext/array.rb'
+require "ext/array"
 
-
-
-require_relative 'brainz/version.rb'
-require_relative 'brainz/backpropagation.rb'
-require_relative 'brainz/synapse.rb'
-require_relative 'brainz/neuron.rb'
-require_relative 'brainz/layer'
-require_relative 'brainz/network'
-require_relative 'brainz/brainz.rb'
-require_relative 'brainz/loader.rb'
+module Brainz
+  require "brainz/algorithms"
+  require "brainz/algorithms/backpropagation"
+  require "brainz/synapse"
+  require "brainz/neuron"
+  require "brainz/layer"
+  require "brainz/network"
+  require "brainz/brainz"
+  require "brainz/loader"
+end

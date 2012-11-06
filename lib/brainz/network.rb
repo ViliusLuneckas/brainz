@@ -1,6 +1,5 @@
 module Brainz
   class Network
-    # layers
     attr_reader :input, :hidden, :output
 
     attr_accessor :training_algorithm, :learning_rate, :momentum, :mse

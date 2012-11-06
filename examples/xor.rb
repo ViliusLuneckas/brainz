@@ -1,4 +1,4 @@
-require_relative '../lib/brainz'
+require 'brainz'
 
 # XOR problem
 
