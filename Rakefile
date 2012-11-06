@@ -1,13 +1,7 @@
-# encoding: utf-8
+#!/usr/bin/env rake
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
 
-require 'rake'
-require 'echoe'
-require './lib/brainz/version.rb'
+RSpec::Core::RakeTask.new
 
-Echoe.new('brainz', Brainz::VERSION) do |gem|
-  gem.description = "Simple artificial intelligence"
-  gem.url = "https://github.com/ViliusLuneckas/brainz/"
-  gem.email = "vilius.luneckas@gmail.com"
-  gem.author = "Vilius Luneckas"
-  gem.development_dependencies = ['rspec', 'mocha']
-end
+task :default => :spec

@@ -1,4 +1,4 @@
-require_relative '../spec/spec_helper'
+require 'spec_helper'
 
 describe Brainz::Brainz do
   subject { Brainz::Brainz.new }
@@ -76,40 +76,6 @@ describe Brainz::Brainz do
       subject.stubs(num_output: 2)
       subject.stubs(output_act: [0.5, 0.7], update: nil)
       subject.guess([]).should == :b
-    end
-  end
-
-
-  describe "#update" do
-
-    before do
-      pending
-      subject.stubs(num_hidden: 2, num_output: 1)
-    end
-
-    it "should return subject" do
-      subject.update([]).should == subject
-    end
-
-    it "should create weight matrices" do
-      Kernel.stubs(rand: 0)
-      expect {
-        expect {
-          subject.update([1.0, 1.0])
-        }.to change { subject.input_weights }.from(nil).to([[-0.2, -0.2], [-0.2, -0.2], [-0.2, -0.2]])
-      }.to change { subject.output_weights }.from(nil).to([[-2], [-2]])
-    end
-
-    it "should create input weights matrix size of input and hidden" do
-      matrix = subject.update([0, 1, 0]).input_weights
-      matrix.size.should == 4
-      matrix[0].size.should == 2
-    end
-
-    it "should create output weights matrix size of hidden and output" do
-      matrix = subject.update([0, 1, 0]).output_weights
-      matrix.size.should == 2
-      matrix[0].size.should == 1
     end
   end
 

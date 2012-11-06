@@ -1,4 +1,7 @@
+require "brainz/version"
 require_relative 'ext/array.rb'
+
+
 
 require_relative 'brainz/version.rb'
 require_relative 'brainz/backpropagation.rb'

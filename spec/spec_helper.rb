@@ -1,6 +1,6 @@
 require 'rspec'
-require 'mocha'
-require_relative '../lib/brainz'
+require 'mocha_standalone'
+require 'brainz'
 
 RSpec.configure do |config|
   config.mock_with :mocha

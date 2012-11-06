@@ -1,4 +1,4 @@
-require_relative '../spec/spec_helper'
+require 'spec_helper'
 
 describe Array do
   describe "#to_hash" do
