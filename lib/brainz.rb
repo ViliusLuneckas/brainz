@@ -1,5 +1,4 @@
 require "brainz/version"
-require "ext/array"
 
 module Brainz
   require "brainz/algorithms"

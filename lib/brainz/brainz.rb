@@ -110,7 +110,7 @@ module Brainz
 
     def explain(*args)
       evaluate(*args)
-      output_order ? output_act.to_hash(output_order) : output_act
+      output_order ? Hash[output_order.zip(output_act)] : output_act
     end
 
     def output_act
